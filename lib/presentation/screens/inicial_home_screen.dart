@@ -68,7 +68,7 @@ class _InicialHomeScreenState extends ConsumerState<InicialHomeScreen> {
             ),
             // Partida rápida
             Padding(
-               padding: const EdgeInsets.all(50.0),
+               padding: const EdgeInsets.fromLTRB(50, 20, 50, 20),
                child: ElevatedButton(
                 onPressed: () {
                   // Navegar a la pantalla de reglas
@@ -99,7 +99,7 @@ class _InicialHomeScreenState extends ConsumerState<InicialHomeScreen> {
           
             // Partida personalizada
              Padding(
-               padding: const EdgeInsets.all(50.0),
+               padding: const EdgeInsets.fromLTRB(50, 30, 50, 30),
                child: ElevatedButton(
                 onPressed: () {
                   // Navegar a la pantalla de reglas
