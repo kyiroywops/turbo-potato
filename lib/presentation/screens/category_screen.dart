@@ -57,42 +57,45 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
   }
 
   void changeQuestion() {
-    final players = ref.read(playerProvider); // Asume que esto devuelve una lista de jugadores
+    final gameMode = ref.read(gameModeProvider.state).state;
+    final players = ref.read(playerProvider);
 
-    if (selectedPlayerForLifeLoss != null) {
-    ref.read(playerProvider.notifier).removeLife(selectedPlayerForLifeLoss!);
-    selectedPlayerForLifeLoss = null;
-    checkForWinner(); // Verificar si hay un ganador
-
-  }
-
-    setState(() {
+    // Solo manejar la lógica de los jugadores si estamos en el modo personalizado.
+    if (gameMode == GameMode.custom) {
+      if (selectedPlayerForLifeLoss != null) {
+        ref.read(playerProvider.notifier).removeLife(selectedPlayerForLifeLoss!);
+        selectedPlayerForLifeLoss = null;
+        checkForWinner(); // Verificar si hay un ganador
+      }
+      // Actualizar el índice del jugador actual solo si hay jugadores.
+      if (players.isNotEmpty) {
+        setState(() {
           currentPlayerIndex = (currentPlayerIndex + 1) % players.length; // Rotar al siguiente jugador
+        });
+      }
+    }
 
-  });
-   // Limpiar el conjunto para la siguiente ronda
-  if (selectedPlayerForLifeLoss != null) {
-    ref.read(playerProvider.notifier).removeLife(selectedPlayerForLifeLoss!);
-    selectedPlayerForLifeLoss = null; // Limpiar para la siguiente ronda
-  }
+    // La lógica para cambiar de pregunta se mantiene igual para ambos modos.
     if (questions.isNotEmpty) {
-      questions.removeLast();
-      changeBackgroundColor();
+      setState(() {
+        questions.removeLast();
+        changeBackgroundColor();
+      });
     } else {
       _showFinishedDialog();
     }
   }
 
-  void restartGame() {
-  // Este es el método que reiniciará el juego
-  setState(() {
-    // Reiniciamos las vidas de los jugadores
-    int initialLives = ref.read(initialLivesProvider.state).state;
-    ref.read(playerProvider.notifier).resetLives(initialLives);
-    // Recargamos las preguntas
-    loadNewQuestions();
-  });
-}
+    void restartGame() {
+    // Este es el método que reiniciará el juego
+    setState(() {
+      // Reiniciamos las vidas de los jugadores
+      int initialLives = ref.read(initialLivesProvider.state).state;
+      ref.read(playerProvider.notifier).resetLives(initialLives);
+      // Recargamos las preguntas
+      loadNewQuestions();
+    });
+  }
 
 
 
@@ -184,7 +187,11 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
   Widget build(BuildContext context) {
     final gameMode = ref.watch(gameModeProvider.state).state;
     final players = ref.watch(playerProvider);
-    final currentPlayer = players[currentPlayerIndex];
+    Player? currentPlayer = gameMode == GameMode.custom && players.isNotEmpty
+    ? players[currentPlayerIndex]
+    : null;
+   // Esta comprobación asegura que solo se acceda a currentPlayer si estamos en un modo de juego que utiliza jugadores.
+
 
 
      return WillPopScope(
@@ -207,7 +214,7 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
       backgroundColor: backgroundColor,
       body: Column(
         children: [
-          Padding(
+            Padding(
             padding: EdgeInsets.all(16.0),
             child: Text(
               'Cultura Chupistica',
@@ -261,13 +268,13 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     CircleAvatar(
-                                      backgroundImage: AssetImage(currentPlayer.avatar),
+                                      backgroundImage: AssetImage(currentPlayer?.avatar ?? 'assets/images/avatars/avatar1.png'),
                                       radius: 25,
                                     ),
                                     SizedBox(width: 10),
                                     Padding(
                                       padding: const EdgeInsets.only(left: 8),
-                                      child: Text(currentPlayer.name, style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Lexend', fontWeight: FontWeight.w700)),
+                                      child: Text(currentPlayer?.name ?? 'Sin jugadores', style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Lexend', fontWeight: FontWeight.w700)),
                                     ),
                                   ],
                                 ),
@@ -275,7 +282,7 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
                              Padding(
                                padding: const EdgeInsets.all(10.0),
                                child: Text(
-                                  'Comienza ${currentPlayer.name} y después el jugador a su derecha.',
+                                  'Comienza ${currentPlayer?.name} y después el jugador a su derecha.',
                                   textAlign: TextAlign.center,
                                   style: TextStyle(fontSize: 10, color: Colors.white.withOpacity(0.9), fontFamily: 'Lexend', fontWeight: FontWeight.w500),
                                 ),
@@ -365,10 +372,12 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
           ),
         ),
       ),
+          ],
+
+          
           
 
 
-        ],
         
       ),
        // Ubicación del botón
