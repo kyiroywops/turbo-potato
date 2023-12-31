@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:culturach/infrastructure/models/player_models.dart';
 import 'package:culturach/infrastructure/models/question_models.dart';
 import 'package:culturach/presentation/providers/gamemode_provider.dart';
 import 'package:culturach/presentation/providers/player_provider.dart';
@@ -21,7 +22,9 @@ class QuestionsScreen extends ConsumerStatefulWidget {
 class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
   List<Question> questions = [];
   late Color backgroundColor;
-  Set<String> selectedPlayersForLifeLoss = {}; // Cambiado a un conjunto
+  String? selectedPlayerForLifeLoss; // Cambiado para almacenar solo un nombre
+  int currentPlayerIndex = 0;
+
 
 
   @override
@@ -54,12 +57,24 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
   }
 
   void changeQuestion() {
-    if (selectedPlayersForLifeLoss.isNotEmpty) {
-      for (var playerName in selectedPlayersForLifeLoss) {
-        ref.read(playerProvider.notifier).removeLife(playerName);
-      }
-      selectedPlayersForLifeLoss.clear(); // Limpiar el conjunto para la siguiente ronda
-    }
+    final players = ref.read(playerProvider); // Asume que esto devuelve una lista de jugadores
+
+    if (selectedPlayerForLifeLoss != null) {
+    ref.read(playerProvider.notifier).removeLife(selectedPlayerForLifeLoss!);
+    selectedPlayerForLifeLoss = null;
+    checkForWinner(); // Verificar si hay un ganador
+
+  }
+
+    setState(() {
+          currentPlayerIndex = (currentPlayerIndex + 1) % players.length; // Rotar al siguiente jugador
+
+  });
+   // Limpiar el conjunto para la siguiente ronda
+  if (selectedPlayerForLifeLoss != null) {
+    ref.read(playerProvider.notifier).removeLife(selectedPlayerForLifeLoss!);
+    selectedPlayerForLifeLoss = null; // Limpiar para la siguiente ronda
+  }
     if (questions.isNotEmpty) {
       questions.removeLast();
       changeBackgroundColor();
@@ -127,10 +142,51 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
     ).then((_) => loadNewQuestions()); // Reiniciar preguntas cuando se cierra el diálogo
   }
 
+  void _showWinnerDialog(Player winner) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('¡Felicidades ${winner.name}!'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircleAvatar(
+              backgroundImage: AssetImage(winner.avatar),
+              radius: 30,
+            ),
+            SizedBox(height: 8),
+            Text('¡Has ganado con ${winner.lives} vidas restantes!'),
+          ],
+        ),
+        actions: <Widget>[
+          TextButton(
+            child: Text('Cerrar'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              restartGame(); // Opcional: reiniciar el juego automáticamente
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void checkForWinner() {
+  final playersWithLives = ref.watch(playerProvider).where((player) => player.lives > 0).toList();
+
+  if (playersWithLives.length == 1) {
+    // Solo queda un jugador con vidas, es el ganador
+    _showWinnerDialog(playersWithLives.first);
+  }
+}
+
   @override
   Widget build(BuildContext context) {
     final gameMode = ref.watch(gameModeProvider.state).state;
     final players = ref.watch(playerProvider);
+    final currentPlayer = players[currentPlayerIndex];
+
+
      return WillPopScope(
     onWillPop: _onWillPop,
     child: Scaffold(
@@ -189,13 +245,45 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Text(
-                            questions.last.content,
-                            style: TextStyle(fontSize: 24, color: Colors.white, fontFamily: 'Lexend', fontWeight: FontWeight.w500),
-                            textAlign: TextAlign.center,
+                          Padding(
+                            padding: const EdgeInsets.all(50.0),
+                            child: Text(
+                              questions.last.content,
+                              style: TextStyle(fontSize: 24, color: Colors.white, fontFamily: 'Lexend', fontWeight: FontWeight.w700),
+                              textAlign: TextAlign.center,
+                            ),
                           ),
                           if (gameMode == GameMode.custom) ...[
-                            SizedBox(height: 20),
+                            
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    CircleAvatar(
+                                      backgroundImage: AssetImage(currentPlayer.avatar),
+                                      radius: 25,
+                                    ),
+                                    SizedBox(width: 10),
+                                    Padding(
+                                      padding: const EdgeInsets.only(left: 8),
+                                      child: Text(currentPlayer.name, style: TextStyle(color: Colors.white, fontSize: 20, fontFamily: 'Lexend', fontWeight: FontWeight.w700)),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                             Padding(
+                               padding: const EdgeInsets.all(10.0),
+                               child: Text(
+                                  'Comienza ${currentPlayer.name} y después el jugador a su derecha.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(fontSize: 10, color: Colors.white.withOpacity(0.9), fontFamily: 'Lexend', fontWeight: FontWeight.w500),
+                                ),
+                             ),
+
+                             
+
+                            SizedBox(height: 50),
                             Text(
                               'Jugadores',
                               style: TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'Lexend', fontWeight: FontWeight.w800),
@@ -205,7 +293,6 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
                                 itemCount: players.length,
                                 itemBuilder: (context, index) {
                                   final player = players[index];
-                                  bool isSelectedForLifeLoss = selectedPlayersForLifeLoss.contains(player.name);
 
                                   return ListTile(
                                     leading: CircleAvatar(
@@ -223,13 +310,13 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
                                     ),
                                     trailing: player.lives > 0 // Solo mostramos la "X" si el jugador tiene vidas
                                       ? IconButton(
-                                          icon: Icon(isSelectedForLifeLoss ? Icons.close : Icons.check, color: Colors.white),
+                                          icon: Icon(player.name == selectedPlayerForLifeLoss ? Icons.close : Icons.check, color: Colors.white),
                                           onPressed: () {
                                             setState(() {
-                                              if (isSelectedForLifeLoss) {
-                                                selectedPlayersForLifeLoss.remove(player.name); // Deseleccionar
+                                              if (selectedPlayerForLifeLoss == player.name) {
+                                                selectedPlayerForLifeLoss = null; // Deseleccionar
                                               } else {
-                                                selectedPlayersForLifeLoss.add(player.name); // Seleccionar para pérdida de vida
+                                                selectedPlayerForLifeLoss = player.name; // Seleccionar para pérdida de vida
                                               }
                                             });
                                           },
@@ -285,4 +372,5 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
     ),
   ); 
   }
+  
 }
