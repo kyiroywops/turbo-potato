@@ -215,7 +215,7 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
             ),
           ),
           Container(
-            margin: EdgeInsets.symmetric(vertical: 10),
+            margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
             padding: EdgeInsets.all(8),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.3),
@@ -246,7 +246,7 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(50.0),
+                            padding: const EdgeInsets.fromLTRB(40, 10, 40, 40),
                             child: Text(
                               questions.last.content,
                               style: TextStyle(fontSize: 24, color: Colors.white, fontFamily: 'Lexend', fontWeight: FontWeight.w700),
@@ -256,7 +256,7 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
                           if (gameMode == GameMode.custom) ...[
                             
                               Padding(
-                                padding: EdgeInsets.symmetric(vertical: 10),
+                                padding: EdgeInsets.symmetric(vertical: 5),
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
@@ -283,47 +283,51 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
 
                              
 
-                            SizedBox(height: 50),
+                            SizedBox(height: 20),
                             Text(
                               'Jugadores',
                               style: TextStyle(fontSize: 18, color: Colors.white, fontFamily: 'Lexend', fontWeight: FontWeight.w800),
                             ),
                             Expanded(
-                              child: ListView.builder(
-                                itemCount: players.length,
-                                itemBuilder: (context, index) {
-                                  final player = players[index];
-
-                                  return ListTile(
-                                    leading: CircleAvatar(
-                                      backgroundImage: AssetImage(player.avatar),
-                                    ),
-                                    title: Text(player.name, style: TextStyle(color: Colors.white, fontFamily: 'Lexend', fontWeight: FontWeight.w700)),
-                                    subtitle: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: List.generate(
-                                        player.lives,
-                                        (_) => Text('❤️', style: TextStyle(color: Colors.white)),
+                              child: Padding(
+                                padding: const EdgeInsets.only(bottom: 0),
+                                child: ListView.builder(
+                                  itemCount: players.length,
+                                
+                                  itemBuilder: (context, index) {
+                                    final player = players[index];
+                                
+                                    return ListTile(
+                                      leading: CircleAvatar(
+                                        backgroundImage: AssetImage(player.avatar),
+                                      ),
+                                      title: Text(player.name, style: TextStyle(color: Colors.white, fontFamily: 'Lexend', fontWeight: FontWeight.w700)),
+                                      subtitle: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: List.generate(
+                                          player.lives,
+                                          (_) => Text('❤️', style: TextStyle(color: Colors.white)),
+                                          
+                                        ),
                                         
                                       ),
-                                      
-                                    ),
-                                    trailing: player.lives > 0 // Solo mostramos la "X" si el jugador tiene vidas
-                                      ? IconButton(
-                                          icon: Icon(player.name == selectedPlayerForLifeLoss ? Icons.close : Icons.check, color: Colors.white),
-                                          onPressed: () {
-                                            setState(() {
-                                              if (selectedPlayerForLifeLoss == player.name) {
-                                                selectedPlayerForLifeLoss = null; // Deseleccionar
-                                              } else {
-                                                selectedPlayerForLifeLoss = player.name; // Seleccionar para pérdida de vida
-                                              }
-                                            });
-                                          },
-                                        )
-                                      : null, // Si no tiene vidas, no mostramos ningún botón
-                                  );
-                                },
+                                      trailing: player.lives > 0 // Solo mostramos la "X" si el jugador tiene vidas
+                                        ? IconButton(
+                                            icon: Icon(player.name == selectedPlayerForLifeLoss ? Icons.close : Icons.check, color: Colors.white),
+                                            onPressed: () {
+                                              setState(() {
+                                                if (selectedPlayerForLifeLoss == player.name) {
+                                                  selectedPlayerForLifeLoss = null; // Deseleccionar
+                                                } else {
+                                                  selectedPlayerForLifeLoss = player.name; // Seleccionar para pérdida de vida
+                                                }
+                                              });
+                                            },
+                                          )
+                                        : null, // Si no tiene vidas, no mostramos ningún botón
+                                    );
+                                  },
+                                ),
                               ),
                             ),
                             
@@ -333,14 +337,8 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
                     ),
                   ),
           ),
-          
-
-
-        ],
-        
-      ),
-       floatingActionButton: Padding(
-        padding: EdgeInsets.only(bottom: 20.0),
+          Padding(
+        padding: EdgeInsets.fromLTRB(10, 0, 10, 30),
         child: ElevatedButton.icon(
           onPressed: () {
             if (questions.isEmpty) {
@@ -367,7 +365,13 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
           ),
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat, // Ubicación del botón
+          
+
+
+        ],
+        
+      ),
+       // Ubicación del botón
     
     ),
   ); 
