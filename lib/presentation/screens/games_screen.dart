@@ -86,6 +86,14 @@ class GamesScreen extends ConsumerWidget {
         name: 'ciudades',
         subtitle: 'Un tour por las ciudades más icónicas del mundo.',
         emoji: '🏙️'),
+    Game(
+    color: Color(0xFFA4C639), // Un color que evoque la temática de la película
+    category: 'senor_anillos',
+    name: 'El Señor de los Anillos',
+    subtitle: 'Desafíos y trivia sobre la épica saga de El Señor de los Anillos.',
+    emoji: '🧝‍♂️'),
+    // colocar un anillo como emoji
+    
 
     // Más juegos...
   ];
