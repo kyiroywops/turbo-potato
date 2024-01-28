@@ -11,7 +11,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class QuestionsScreen extends ConsumerStatefulWidget {
   final String category;
-  
+
 
   QuestionsScreen({Key? key, required this.category}) : super(key: key);
 
@@ -27,16 +27,13 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
 
 
 
-  @override
+   @override
   void initState() {
     super.initState();
     backgroundColor = Colors.primaries[Random().nextInt(Colors.primaries.length)];
-   
-    
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        loadNewQuestions();
-      });
-    
+    Future.microtask(
+      () => ref.read(questionsProvider(widget.category).notifier).loadQuestions(widget.category),
+    );
   }
 
   void loadNewQuestions() {
