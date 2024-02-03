@@ -1,11 +1,11 @@
 import 'package:culturach/presentation/providers/gamemode_provider.dart';
+import 'package:culturach/presentation/widgets/boton_discord.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:go_router/go_router.dart';
 import 'package:video_player/video_player.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 
 class InicialHomeScreen extends ConsumerStatefulWidget {
   @override
@@ -14,7 +14,6 @@ class InicialHomeScreen extends ConsumerStatefulWidget {
 
 class _InicialHomeScreenState extends ConsumerState<InicialHomeScreen> {
   VideoPlayerController? _controller;
-
 
   @override
   void initState() {
@@ -71,37 +70,103 @@ class _InicialHomeScreenState extends ConsumerState<InicialHomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Padding(
-                        padding: EdgeInsets.all(screenSize.width * 0.1),
-                        child: Center(
-                          child: Image.asset(
-                            'assets/images/logo.png',
-                            width: screenSize.width * 0.5,
-                            height: screenSize.height * 0.3,
-                            fit: BoxFit.contain,
-                          ),
-                        ),
-                      ),
+                          padding: EdgeInsets.all(screenSize.width * 0.1),
+                          child: Center(
+                            child: Image.asset(
+                              'assets/images/logo.png',
+                              width: screenSize.width * 0.4,
+                              height: screenSize.height * 0.3,
+                              fit: BoxFit.contain,
+                            ),
+                          )),
                       _buildButton(context, 'Partida rápida', GameMode.quick,
                           screenSize),
                       _buildButton(context, 'Partida personalizada',
                           GameMode.custom, screenSize),
-                      _buildButton(
-                          context, 'Cómo jugar', GameMode.custom, screenSize,
-                          isBlack: false, textColor: Colors.black),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.center, // Centrar los íconos en el Row
-                        children: <Widget>[
-                        IconButton(
-                          icon: Icon(FontAwesomeIcons.instagram, color: Colors.white),
-                          onPressed: () => _launchURL('https://www.instagram.com/piramide'),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: screenSize.width * 0.2,
+                          vertical: screenSize.height * 0.02,
                         ),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            GoRouter.of(context).push('/instructions');
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              'Cómo jugar',
+                              style: TextStyle(
+                                color: Colors.black, // Color del texto
+                                fontFamily: 'Lexend',
+                                fontWeight: FontWeight.w800,
+                                fontSize: screenSize.width * 0.035,
+                              ),
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white.withOpacity(0.90), // Color de fondo del botón
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30), // Bordes redondeados
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 10,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment
+                            .center, // Centrar los íconos en el Row
+                        children: <Widget>[
+                          IconButton(
+                            icon: Icon(FontAwesomeIcons.instagram,
+                                color: Colors.white),
+                            onPressed: () => _launchURL(
+                                'https://www.instagram.com/culturachupisticaapp'),
+                          ),
                           SizedBox(width: 20), // Espacio entre los íconos
                           IconButton(
-                            icon: Icon(FontAwesomeIcons.discord, color: Colors.white,), // Usando el ícono personalizado de Discord como en la otra pantalla
-                            onPressed: () => _launchURL('https://discord.com/invite/piramide'),
+                            icon: Icon(
+                              Icons.discord,
+                              color: Colors.white,
+                            ),
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return DiscordDialog(
+                                      discordUrl:
+                                          'https://discord.gg/EHqWWN59'); // Coloca aquí tu URL de Discord
+                                },
+                              );
+                            },
                           ),
                         ],
                       ),
+                      SizedBox(
+                          height: 20), // Espacio entre los íconos y el texto
+                      Text(
+                        'Recuerda beber con moderación.',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Lexend',
+                          fontWeight: FontWeight.w300,
+                          fontSize: 11,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                        '© Derechos reservados Tryagain.',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: 'Lexend',
+                          fontWeight: FontWeight.w200,
+                          fontSize: 11,
+                        ),
+                        textAlign: TextAlign.center,
+                      )
                     ],
                   ),
                 );
@@ -119,8 +184,7 @@ class _InicialHomeScreenState extends ConsumerState<InicialHomeScreen> {
     GameMode mode,
     Size screenSize, {
     bool isBlack = true,
-    Color textColor = Colors
-        .white, // Añadido parámetro para el color del texto con valor por defecto blanco
+    Color textColor = Colors.white,
   }) {
     return Padding(
       padding: EdgeInsets.symmetric(
@@ -129,15 +193,23 @@ class _InicialHomeScreenState extends ConsumerState<InicialHomeScreen> {
       ),
       child: ElevatedButton(
         onPressed: () {
+          // Establece el modo de juego usando gameModeProvider
           ref.read(gameModeProvider.state).state = mode;
-          GoRouter.of(context).push('/playerselection');
+          // Navega a la ruta correspondiente basada en el modo de juego seleccionado
+          if (mode == GameMode.quick) {
+            // Navega a '/games' para la partida rápida
+            GoRouter.of(context).go('/games');
+          } else if (mode == GameMode.custom) {
+            // Navega a '/playerselection' para la partida personalizada
+            GoRouter.of(context).go('/playerselection');
+          }
         },
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
             text,
             style: TextStyle(
-              color: textColor, // Usamos el parámetro textColor aquí
+              color: textColor,
               fontFamily: 'Lexend',
               fontWeight: FontWeight.w800,
               fontSize: screenSize.width * 0.035,

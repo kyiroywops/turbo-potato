@@ -97,34 +97,60 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
 
 
   Future<bool> _onWillPop() async {
-    bool shouldPop = (await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-         
-            title: Text('Salir', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w600)),
-            content: Text('Si sales ahora, la partida se reiniciará. ¿Quieres salir?', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w500)),
-            actions: <Widget>[
-              TextButton(
-                child: Text('No', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w800)),
-                onPressed: () => Navigator.of(context).pop(false),
-              ),
-              TextButton(
-                child: Text('Sí', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w600)),
-                onPressed: () => Navigator.of(context).pop(true),
-              ),
-            ],
+  // Mostrar un diálogo de confirmación al usuario
+  final shouldPop = await showDialog<bool>(
+    context: context,
+    builder: (context) => AlertDialog(
+      backgroundColor: Colors.grey.shade300, // Fondo del AlertDialog
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+      titlePadding: EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 10.0),
+      contentPadding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+      title: Padding(
+        padding: const EdgeInsets.only(top: 10.0),
+        child: Icon(
+          Icons.autorenew,
+          color: Colors.black,
+          size: 68.0,
+        ),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(child: Text('¿Deseas salir?', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w800, fontSize: 20))),
+          SizedBox(height: 8),
+          Text('Si presionas "Salir", irás a la pantalla asignar cartas y se reiniciará la partida.', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w400)),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(false),
+          child: Text('No', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w800)),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            // Aquí se coloca la lógica para reiniciar el juego antes de salir
+            int initialLives = ref.read(initialLivesProvider.state).state;
+            ref.read(playerProvider.notifier).resetLives(initialLives);
+            loadNewQuestions();
+            Navigator.of(context).pop(true);
+          },
+          child: Text('Salir', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w600)),
+          style: ElevatedButton.styleFrom(
+            primary: Colors.black,
+            onPrimary: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
           ),
-        )) ??
-        false;
+        ),
+      ],
+    ),
+  ) ?? false;
 
-     if (shouldPop) {
-      int initialLives = ref.read(initialLivesProvider.state).state;
-      ref.read(playerProvider.notifier).resetLives(initialLives);
-      loadNewQuestions();
-    }
+  return shouldPop;
+}
 
-    return shouldPop;
-  }
 
   void _showFinishedDialog() {
     showDialog(

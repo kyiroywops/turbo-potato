@@ -31,23 +31,10 @@ flutter:
   assets:
     - assets/images/
     - assets/images/avatars/
-    - assets/images/games/
     - assets/images/videos/
     - assets/jsons/
 
-  fonts:
-    - family: ReadexPro
-      fonts:
-        - asset: assets/fonts/ReadexPro-Regular.ttf
-          weight: 400
-        - asset: assets/fonts/ReadexPro-Medium.ttf
-          weight: 500
-        - asset: assets/fonts/ReadexPro-SemiBold.ttf
-          weight: 600
-        - asset: assets/fonts/ReadexPro-Bold.ttf
-          weight: 700
-        - asset: assets/fonts/ReadexPro-Light.ttf
-          weight: 300
+  fonts: 
     - family: Lexend
       fonts:
         - asset: assets/fonts/Lexend-Thin.ttf

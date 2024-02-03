@@ -12,33 +12,57 @@ final appRouter = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-        builder: (BuildContext context, GoRouterState state) => InicialHomeScreen(),
-        
-
-
+      pageBuilder: (context, state) {
+        return CustomTransitionPage<void>(
+          key: state.pageKey,
+          child: InicialHomeScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            return FadeTransition(opacity: animation, child: child);
+          },
+        );
+      },  
     ),
     GoRoute(
       path: '/playerselection',
-        builder: (BuildContext context, GoRouterState state) => PlayerSelectionScreen(),
-        
-
-
+      pageBuilder: (context, state) {
+        return CustomTransitionPage<void>(
+          key: state.pageKey,
+          child: PlayerSelectionScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            var tween = Tween(begin: Offset(0.0, 1.0), end: Offset.zero).chain(CurveTween(curve: Curves.easeInOut));
+            return SlideTransition(position: animation.drive(tween), child: child);
+          },
+        );
+      },
+    
     ),
-     GoRoute(
+    GoRoute(
       path: '/games',
-        builder: (BuildContext context, GoRouterState state) => GamesScreen(),
-      
-        
-
-
+      pageBuilder: (context, state) {
+        return CustomTransitionPage<void>(
+          key: state.pageKey,
+          child: GamesScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            var tween = Tween(begin: Offset(0.0, 1.0), end: Offset.zero).chain(CurveTween(curve: Curves.easeInOut));
+            return SlideTransition(position: animation.drive(tween), child: child);
+          },
+        );
+      },
+    
     ),
      GoRoute(
       path: '/instructions',
-        builder: (BuildContext context, GoRouterState state) => InstructionsScreen(),
-      
-        
-
-
+      pageBuilder: (context, state) {
+        return CustomTransitionPage<void>(
+          key: state.pageKey,
+          child: InstructionsScreen(),
+          transitionsBuilder: (context, animation, secondaryAnimation, child) {
+            var tween = Tween(begin: Offset(0.0, 1.0), end: Offset.zero).chain(CurveTween(curve: Curves.easeInOut));
+            return SlideTransition(position: animation.drive(tween), child: child);
+          },
+        );
+      },
+    
     ),
 
     GoRoute(
