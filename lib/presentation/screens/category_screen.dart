@@ -186,23 +186,71 @@ void restartGame() {
 void _showFinishedDialog() {
   showDialog(
     context: context,
-    builder: (context) => AlertDialog(
-      title: Text('Fin de las preguntas'),
-      content: Text('Has pasado por todas las preguntas de esta categoría. ¿Quieres jugar de nuevo?'),
-      actions: <Widget>[
-        TextButton(
-          child: Text('No'),
-          onPressed: () => Navigator.of(context).pop(),
+    barrierDismissible: false,
+
+    builder: (context) =>AlertDialog(
+        backgroundColor: Colors.grey.shade300, // Fondo del AlertDialog
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+        titlePadding: EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 10.0),
+        contentPadding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+        title: Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: Icon(
+            Icons.hourglass_empty,
+            color: Colors.black,
+            size: 68.0,
+          ),
         ),
-        TextButton(
-          child: Text('Reiniciar'),
-          onPressed: () {
-            Navigator.of(context).pop(); // Cerrar el diálogo
-            restartGame(); // Llama al método para reiniciar el juego
-          },
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+      child: Text(
+        'Se acabaron las preguntas 😢',
+        style: TextStyle(
+          fontFamily: 'Lexend',
+          fontWeight: FontWeight.w800,
+          fontSize: 24,
+          color: Colors.white,
         ),
-      ],
+        textAlign: TextAlign.center,
+      ),
     ),
+    SizedBox(height: 16),
+    Text(
+      'Has respondido a todas las preguntas disponibles en esta categoría. Puedes reiniciar para jugar de nuevo o volver al menú principal para explorar otras opciones.',
+      style: TextStyle(
+        fontFamily: 'Lexend',
+        fontWeight: FontWeight.w400,
+        fontSize: 16,
+        color: Colors.white,
+      ),
+      textAlign: TextAlign.center,
+    ),
+          ],
+        ),
+        actions: [
+          
+          ElevatedButton(
+            onPressed: () {
+            // Obtén el valor inicial de las vidas desde el provider
+            final initialLives = ref.read(initialLivesProvider);
+            // Restablece las vidas de todos los jugadores
+            ref.read(playerProvider.notifier).resetPlayersLives(initialLives);
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          },
+            child: Text('Salir', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w600)),
+            style: ElevatedButton.styleFrom(
+              primary: Colors.black,
+              onPrimary: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          ),
+        ],
+      ),
   ).then((_) {
     // Opcional: Reiniciar el juego automáticamente si el diálogo se cierra sin seleccionar ninguna opción.
     restartGame();
@@ -275,6 +323,8 @@ void _showFinishedDialog() {
 void _showWinnerDialog(Player winner) {
   showDialog(
     context: context,
+    barrierDismissible: false,
+
     builder: (context) => AlertDialog(
       backgroundColor: Colors.grey.shade300, // Fondo del AlertDialog
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
@@ -334,7 +384,18 @@ void _showWinnerDialog(Player winner) {
     ),
   );
 }
-  
+
+ void _nextQuestionWithoutLifeLoss() {
+  final questions = ref.read(questionsProvider(widget.category)).value;
+  if (questions != null && currentQuestionIndex < questions.length - 1) {
+    setState(() {
+      currentQuestionIndex++;
+    });
+  } else {
+    // No hay más preguntas disponibles, muestra el diálogo de fin.
+    _showFinishedDialog();
+  }
+} 
 
   void checkForWinner() {
     final playersWithLives =
@@ -596,35 +657,44 @@ void handleLifeLoss() {
                             ),
                           ),
                   ),
-                 Padding(
+                Padding(
                   padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      // Botón para "Pasar" sin restar vidas
-                      ElevatedButton.icon(
-                        onPressed: nextQuestion, // Cambia la pregunta sin restar vidas
-                        icon: Icon(Icons.skip_next, color: Colors.black),
-                        label: Text(
-                          'Pasar',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontFamily: 'Lexend',
-                            fontSize: 16,
+                      if (gameMode == GameMode.custom) ...[
+                        // Botón para "Pasar" solo visible en GameMode.custom
+                        ElevatedButton.icon(
+                          onPressed: nextQuestion, // Esta función maneja el cambio de pregunta sin afectar las vidas
+                          icon: Icon(Icons.skip_next, color: Colors.black),
+                          label: Text(
+                            'Pasar',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontFamily: 'Lexend',
+                              fontSize: 16,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                           ),
                         ),
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                        ),
-                      ),
-
-                      // Botón para "Siguiente pregunta" que puede restar vidas
+                      ],
+                      // Botón para "Siguiente pregunta" visible en ambos modos, pero su acción depende del modo
                       ElevatedButton.icon(
-                        onPressed: changeQuestion,
+                        onPressed: () {
+                          if (gameMode == GameMode.quick) {
+                            // En GameMode.quick simplemente cambia a la siguiente pregunta
+                            _nextQuestionWithoutLifeLoss();
+                          } else {
+                            // En GameMode.custom maneja la lógica de vidas y selección de jugadores
+                            changeQuestion();
+                          }
+                        },
                         icon: Icon(Icons.arrow_forward, color: Colors.black),
                         label: Text(
                           questions.isEmpty ? 'Reiniciar Juego' : 'Siguiente pregunta',
