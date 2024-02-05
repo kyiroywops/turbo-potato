@@ -52,38 +52,106 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
   }
 
 void changeQuestion() {
-  // Imprime el índice actual antes de intentar cambiar la pregunta.
-  print("Índice actual de la pregunta antes de cambiar: $currentQuestionIndex");
+  // Verifica si hay un jugador seleccionado para perder una vida.
+  if (selectedPlayerForLifeLoss == null) {
+    // Muestra una alerta indicando que se debe seleccionar un jugador.
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Atención"),
+          content: Text("Debes seleccionar a un jugador antes de continuar."),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Entendido"),
+              onPressed: () => Navigator.of(context).pop(), // Cierra el diálogo
+            ),
+          ],
+        );
+      },
+    );
+    return; // Sale del método sin cambiar la pregunta.
+  }
 
-  final questionsState = ref.watch(questionsProvider(widget.category));
-  questionsState.whenData((questions) {
-    print("Total de preguntas: ${questions.length}"); // Imprime el total de preguntas.
+  // Si un jugador ha sido seleccionado, procede a restarle una vida.
+  handleLifeLoss(); // Llama a la función que maneja la pérdida de vidas.
+  rotatePlayer(); // Rota al siguiente jugador.
 
-    if (currentQuestionIndex < questions.length - 1) {
-      print("Cambiando a la siguiente pregunta...");
-      setState(() {
-        currentQuestionIndex++;
-      });
-      // Imprime el índice después de cambiarlo.
-      print("Índice actual de la pregunta después de cambiar: $currentQuestionIndex");
-    } else {
-      print("No hay más preguntas. Mostrando diálogo de fin...");
-      _showFinishedDialog();
-    }
+  // Reinicia el estado de selectedPlayerForLifeLoss después de restar la vida.
+  setState(() {
+    selectedPlayerForLifeLoss = null;
+  });
+
+  // Obtiene el estado actual de las preguntas.
+  final questions = ref.read(questionsProvider(widget.category)).value;
+  // Verifica si hay más preguntas disponibles.
+  if (questions != null && currentQuestionIndex < questions.length - 1) {
+    setState(() {
+      currentQuestionIndex++;
+    });
+  } else {
+    // No hay más preguntas disponibles, muestra el diálogo de fin.
+    _showFinishedDialog();
+  }
+}
+
+void rotatePlayer() {
+  // Verifica si hay jugadores con vidas.
+  final hasPlayersWithLives = ref.read(playerProvider).any((player) => player.lives > 0);
+  if (!hasPlayersWithLives) {
+    // Manejar el caso en que no hay jugadores con vidas, si es necesario.
+    return;
+  }
+
+  int nextPlayerIndex = currentPlayerIndex;
+
+  // Encuentra el índice del próximo jugador con vidas.
+  do {
+    nextPlayerIndex = (nextPlayerIndex + 1) % ref.read(playerProvider).length;
+  } while (ref.read(playerProvider)[nextPlayerIndex].lives <= 0);
+
+  // Actualiza el índice del jugador actual.
+  setState(() {
+    currentPlayerIndex = nextPlayerIndex;
   });
 }
 
 
-  void restartGame() {
-    // Este es el método que reiniciará el juego
-    setState(() {
-      // Reiniciamos las vidas de los jugadores
-      int initialLives = ref.read(initialLivesProvider.state).state;
-      ref.read(playerProvider.notifier).resetLives(initialLives);
-      // Recargamos las preguntas
-      loadNewQuestions();
-    });
-  }
+
+void restartGame() {
+  // Reinicia el índice de la pregunta actual a 0
+  setState(() {
+    currentQuestionIndex = 0;
+  });
+  // Vuelve a cargar las preguntas
+  loadNewQuestions();
+}
+
+void _showFinishedDialog() {
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text('Fin de las preguntas'),
+      content: Text('Has pasado por todas las preguntas de esta categoría. ¿Quieres jugar de nuevo?'),
+      actions: <Widget>[
+        TextButton(
+          child: Text('No'),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        TextButton(
+          child: Text('Reiniciar'),
+          onPressed: () {
+            Navigator.of(context).pop(); // Cerrar el diálogo
+            restartGame(); // Llama al método para reiniciar el juego
+          },
+        ),
+      ],
+    ),
+  ).then((_) {
+    // Opcional: Reiniciar el juego automáticamente si el diálogo se cierra sin seleccionar ninguna opción.
+    restartGame();
+  });
+}
 
   Future<bool> _onWillPop() async {
     bool shouldPop = (await showDialog<bool>(
@@ -148,22 +216,6 @@ void changeQuestion() {
     return shouldPop;
   }
 
-  void _showFinishedDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Fin de las preguntas'),
-        content: Text('Has pasado por todas las preguntas de esta categoría.'),
-        actions: <Widget>[
-          TextButton(
-            child: Text('Cerrar'),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
-    ).then((_) =>
-        loadNewQuestions()); // Reiniciar preguntas cuando se cierra el diálogo
-  }
 
   void _showWinnerDialog(Player winner) {
     showDialog(
@@ -203,6 +255,28 @@ void changeQuestion() {
       _showWinnerDialog(playersWithLives.first);
     }
   }
+
+void handleLifeLoss() {
+  if (selectedPlayerForLifeLoss != null) {
+    // Llama a removeLife en el notifier para restar una vida al jugador seleccionado.
+    ref.read(playerProvider.notifier).removeLife(selectedPlayerForLifeLoss!);
+
+    // No es necesario llamar a un método separado para eliminar al jugador aquí,
+    // asumiendo que `removeLife` ya maneja la eliminación de jugadores sin vidas.
+
+    // Verifica si hay un ganador después de la posible eliminación.
+    checkForWinner();
+
+    // Reinicia el estado de selectedPlayerForLifeLoss a null.
+    setState(() {
+      selectedPlayerForLifeLoss = null;
+    });
+  }
+}
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -400,21 +474,17 @@ void changeQuestion() {
                                                       0 // Solo mostramos la "X" si el jugador tiene vidas
                                                   ? IconButton(
                                                       icon: Icon(
-                                                          player.name ==
-                                                                  selectedPlayerForLifeLoss
-                                                              ? Icons.close
-                                                              : Icons.check,
-                                                          color: Colors.white),
+                                                        selectedPlayerForLifeLoss == player.name ? Icons.close : Icons.check,
+                                                        color: Colors.white,
+                                                      ),
                                                       onPressed: () {
                                                         setState(() {
-                                                          if (selectedPlayerForLifeLoss ==
-                                                              player.name) {
-                                                            selectedPlayerForLifeLoss =
-                                                                null; // Deseleccionar
+                                                          // Si el jugador ya estaba seleccionado, deselecciona.
+                                                          if (selectedPlayerForLifeLoss == player.name) {
+                                                            selectedPlayerForLifeLoss = null;
                                                           } else {
-                                                            selectedPlayerForLifeLoss =
-                                                                player
-                                                                    .name; // Seleccionar para pérdida de vida
+                                                            // Selecciona el nuevo jugador y deselecciona cualquier otro previamente seleccionado.
+                                                            selectedPlayerForLifeLoss = player.name;
                                                           }
                                                         });
                                                       },
