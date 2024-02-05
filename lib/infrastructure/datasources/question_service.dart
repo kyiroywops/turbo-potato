@@ -1,12 +1,14 @@
 import 'dart:convert';
-
 import 'package:culturach/infrastructure/models/question_models.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class QuestionService {
   Future<List<Question>> loadQuestions(String category) async {
-    final String response = await rootBundle.loadString('assets/jsons/$category.json');
-    final data = json.decode(response);
-    return (data['questions'] as List).map((i) => Question.fromJson(i)).toList();
+    final String fileName = 'assets/jsons/$category.json';  // Asegúrate de que la ruta del archivo sea correcta
+    final String jsonString = await rootBundle.loadString(fileName);
+    final List<dynamic> jsonResponse = json.decode(jsonString)['questions'];
+    
+    // Asigna la categoría a cada pregunta basada en el nombre del archivo
+    return jsonResponse.map((qJson) => Question.fromJson(qJson, category)).toList();
   }
 }
