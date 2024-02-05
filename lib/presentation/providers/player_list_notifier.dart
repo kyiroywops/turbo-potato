@@ -34,10 +34,10 @@ class PlayerListNotifier extends StateNotifier<List<Player>> {
 }
 
 
-  void resetLives(int initialLives) {
-    state =
-        state.map((player) => player.copyWith(lives: initialLives)).toList();
-  }
+  void resetPlayersLives(int initialLives) {
+  state = state.map((player) => player.copyWith(lives: initialLives)).toList();
+}
+
 
  
   

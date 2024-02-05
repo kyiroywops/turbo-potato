@@ -4,6 +4,7 @@ import 'package:culturach/infrastructure/models/player_models.dart';
 import 'package:culturach/presentation/providers/gamemode_provider.dart';
 import 'package:culturach/presentation/providers/player_provider.dart';
 import 'package:culturach/presentation/providers/questions_provider.dart';
+import 'package:culturach/presentation/providers/vidas_iniciales_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -34,7 +35,7 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
     );
   }
 
-
+  
   void nextQuestion() {
    changeBackgroundColor();
   // Solo cambia la pregunta sin restar vidas a ningún jugador.
@@ -271,88 +272,68 @@ void _showFinishedDialog() {
     return shouldPop;
   }
 
-  void _showWinnerDialog(Player winner) {
+void _showWinnerDialog(Player winner) {
   showDialog(
     context: context,
     builder: (context) => AlertDialog(
       backgroundColor: Colors.grey.shade300, // Fondo del AlertDialog
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-      titlePadding: EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 10.0),
-      contentPadding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
-      title: Padding(
-        padding: const EdgeInsets.only(top: 10.0),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+        titlePadding: EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 10.0),
+        contentPadding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+      title: Center( // Centra el icono en el título
         child: Icon(
           Icons.star,
-          color: Colors.orange,
+          color: Colors.black,
           size: 68.0,
         ),
       ),
       content: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+        // Ajusta la alineación aquí para centrar
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Center(child: Text('¡Felicidades ${winner.name}!', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w800, fontSize: 20))),
+          Text('¡Felicidades ${winner.name}!', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w800, fontSize: 20), textAlign: TextAlign.center),
           SizedBox(height: 8),
-          Text('¡Has ganado con ${winner.lives} vidas restantes!', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w400)),
+          Text('¡Has ganado con ${winner.lives} vidas restantes!', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w400), textAlign: TextAlign.center),
           Padding(
             padding: EdgeInsets.only(top: 20),
+            // Agrandar la imagen aumentando el radio
             child: CircleAvatar(
               backgroundImage: AssetImage(winner.avatar),
-              radius: 30,
+              radius: 50, // Aumenta el tamaño del radio aquí para agrandar la imagen
             ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            // Añadir otro icono
+            child: Text(winner.name, style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w900, fontSize: 25), textAlign: TextAlign.center),
           ),
         ],
       ),
+      actionsAlignment: MainAxisAlignment.center, // Esto centra los botones de acción
       actions: [
         ElevatedButton(
           onPressed: () {
+            // Obtén el valor inicial de las vidas desde el provider
+            final initialLives = ref.read(initialLivesProvider);
+            // Restablece las vidas de todos los jugadores
+            ref.read(playerProvider.notifier).resetPlayersLives(initialLives);
             Navigator.of(context).popUntil((route) => route.isFirst);
           },
-          child: Text('Volver a los juegos', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w600)),
+          child: Text('Cerrar partida', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w600)),
           style: ElevatedButton.styleFrom(
-            primary: Colors.orange,
-            onPrimary: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+              primary: Colors.black,
+              onPrimary: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
           ),
-        ),
+      
       ],
     ),
   );
 }
-
-
-
-  // void _showWinnerDialog(Player winner) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) => AlertDialog(
-  //       title: Text('¡Felicidades ${winner.name}!'),
-  //       content: Column(
-  //         mainAxisSize: MainAxisSize.min,
-  //         children: [
-  //           CircleAvatar(
-  //             backgroundImage: AssetImage(winner.avatar),
-  //             radius: 30,
-  //           ),
-  //           SizedBox(height: 8),
-  //           Text('¡Has ganado con ${winner.lives} vidas restantes!'),
-  //         ],
-  //       ),
-  //       actions: <Widget>[
-  //         TextButton(
-  //           child: Text('Cerrar'),
-  //           onPressed: () {
-  //             Navigator.of(context).pop();
-  //             restartGame(); // Opcional: reiniciar el juego automáticamente
-  //           },
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   
 
   void checkForWinner() {
@@ -412,6 +393,11 @@ void handleLifeLoss() {
               icon: Icon(Icons.arrow_back, color: Colors.white, size: 23),
               onPressed: () async {
                 if (await _onWillPop()) {
+                      // Obtén el valor inicial de las vidas desde el provider
+                  final initialLives = ref.read(initialLivesProvider);
+                  // Restablece las vidas de todos los jugadores
+                  ref.read(playerProvider.notifier).resetPlayersLives(initialLives);
+
                   Navigator.of(context).pop();
                 }
               },
