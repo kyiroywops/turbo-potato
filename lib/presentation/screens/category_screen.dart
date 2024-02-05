@@ -1,11 +1,9 @@
 import 'dart:math';
 
 import 'package:culturach/infrastructure/models/player_models.dart';
-import 'package:culturach/infrastructure/models/question_models.dart';
 import 'package:culturach/presentation/providers/gamemode_provider.dart';
 import 'package:culturach/presentation/providers/player_provider.dart';
 import 'package:culturach/presentation/providers/questions_provider.dart';
-import 'package:culturach/presentation/providers/vidas_iniciales_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -36,6 +34,22 @@ class _QuestionsScreenState extends ConsumerState<QuestionsScreen> {
     );
   }
 
+
+  void nextQuestion() {
+   changeBackgroundColor();
+  // Solo cambia la pregunta sin restar vidas a ningún jugador.
+  final questions = ref.read(questionsProvider(widget.category)).value;
+  if (questions != null && currentQuestionIndex < questions.length - 1) {
+    setState(() {
+      currentQuestionIndex++;
+    });
+  } else {
+    // No hay más preguntas disponibles, muestra el diálogo de fin.
+    _showFinishedDialog();
+  }
+}
+
+
   void loadNewQuestions() {
     // Solicita al provider que cargue nuevamente las preguntas.
     // Esto asume que el provider maneja adecuadamente la lógica para recargar y mezclar las preguntas.
@@ -59,20 +73,61 @@ void changeQuestion() {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text("Atención"),
-          content: Text("Debes seleccionar a un jugador antes de continuar."),
-          actions: <Widget>[
-            TextButton(
-              child: Text("Entendido"),
-              onPressed: () => Navigator.of(context).pop(), // Cierra el diálogo
+        backgroundColor: Colors.grey.shade300,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20.0),
+          side: BorderSide(color: Colors.orange, width: 2),
+        ),
+        title: Icon(
+          Icons.warning_amber_rounded,
+          color: Colors.orange,
+          size: 68.0,
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Text(
+                'Selecciona un jugador',
+                style: TextStyle(
+                  fontFamily: 'Lexend',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 20,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Selecciona a un jugador para restarle una vida.',
+              style: TextStyle(
+                fontFamily: 'Lexend',
+                fontWeight: FontWeight.w400,
+                color: Colors.black,
+              ),
             ),
           ],
-        );
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(
+              'OK',
+              style: TextStyle(
+                fontFamily: 'Lexend',
+                fontWeight: FontWeight.w600,
+                color: Colors.orange,
+              ),
+            ),
+          ),
+        ],
+      );
       },
     );
     return; // Sale del método sin cambiar la pregunta.
   }
-
+  changeBackgroundColor();
   // Si un jugador ha sido seleccionado, procede a restarle una vida.
   handleLifeLoss(); // Llama a la función que maneja la pérdida de vidas.
   rotatePlayer(); // Rota al siguiente jugador.
@@ -216,35 +271,89 @@ void _showFinishedDialog() {
     return shouldPop;
   }
 
-
   void _showWinnerDialog(Player winner) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('¡Felicidades ${winner.name}!'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircleAvatar(
+  showDialog(
+    context: context,
+    builder: (context) => AlertDialog(
+      backgroundColor: Colors.grey.shade300, // Fondo del AlertDialog
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+      titlePadding: EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 10.0),
+      contentPadding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+      title: Padding(
+        padding: const EdgeInsets.only(top: 10.0),
+        child: Icon(
+          Icons.star,
+          color: Colors.orange,
+          size: 68.0,
+        ),
+      ),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(child: Text('¡Felicidades ${winner.name}!', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w800, fontSize: 20))),
+          SizedBox(height: 8),
+          Text('¡Has ganado con ${winner.lives} vidas restantes!', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w400)),
+          Padding(
+            padding: EdgeInsets.only(top: 20),
+            child: CircleAvatar(
               backgroundImage: AssetImage(winner.avatar),
               radius: 30,
             ),
-            SizedBox(height: 8),
-            Text('¡Has ganado con ${winner.lives} vidas restantes!'),
-          ],
-        ),
-        actions: <Widget>[
-          TextButton(
-            child: Text('Cerrar'),
-            onPressed: () {
-              Navigator.of(context).pop();
-              restartGame(); // Opcional: reiniciar el juego automáticamente
-            },
           ),
         ],
       ),
-    );
-  }
+      actions: [
+        ElevatedButton(
+          onPressed: () {
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          },
+          child: Text('Volver a los juegos', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w600)),
+          style: ElevatedButton.styleFrom(
+            primary: Colors.orange,
+            onPrimary: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+
+
+  // void _showWinnerDialog(Player winner) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) => AlertDialog(
+  //       title: Text('¡Felicidades ${winner.name}!'),
+  //       content: Column(
+  //         mainAxisSize: MainAxisSize.min,
+  //         children: [
+  //           CircleAvatar(
+  //             backgroundImage: AssetImage(winner.avatar),
+  //             radius: 30,
+  //           ),
+  //           SizedBox(height: 8),
+  //           Text('¡Has ganado con ${winner.lives} vidas restantes!'),
+  //         ],
+  //       ),
+  //       actions: <Widget>[
+  //         TextButton(
+  //           child: Text('Cerrar'),
+  //           onPressed: () {
+  //             Navigator.of(context).pop();
+  //             restartGame(); // Opcional: reiniciar el juego automáticamente
+  //           },
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
+  
 
   void checkForWinner() {
     final playersWithLives =
@@ -501,35 +610,57 @@ void handleLifeLoss() {
                             ),
                           ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(10, 0, 10, 30),
-                    child: ElevatedButton.icon(
-                       onPressed: changeQuestion, // Asegúrate de que llame a changeQuestion
-
-                      icon: Icon(Icons.arrow_forward, color: Colors.black),
-                      label: Text(
-                        questions.isEmpty
-                            ? 'Reiniciar Juego'
-                            : 'siguiente pregunta',
-                        style: TextStyle(
+                 Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      // Botón para "Pasar" sin restar vidas
+                      ElevatedButton.icon(
+                        onPressed: nextQuestion, // Cambia la pregunta sin restar vidas
+                        icon: Icon(Icons.skip_next, color: Colors.black),
+                        label: Text(
+                          'Pasar',
+                          style: TextStyle(
                             color: Colors.black,
                             fontFamily: 'Lexend',
-                            fontSize: 16),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.white, // Color de fondo del botón
-                        onPrimary: Colors
-                            .black, // Color del texto e icono cuando el botón es presionado
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(30), // Bordes redondeados
+                            fontSize: 16,
+                          ),
                         ),
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10), // Ajuste del padding
-                        elevation: 5, // Sombra del botón
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                        ),
                       ),
-                    ),
+
+                      // Botón para "Siguiente pregunta" que puede restar vidas
+                      ElevatedButton.icon(
+                        onPressed: changeQuestion,
+                        icon: Icon(Icons.arrow_forward, color: Colors.black),
+                        label: Text(
+                          questions.isEmpty ? 'Reiniciar Juego' : 'Siguiente pregunta',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontFamily: 'Lexend',
+                            fontSize: 16,
+                          ),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          primary: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          elevation: 5,
+                        ),
+                      ),
+                    ],
                   ),
+                ),
+
                 ],
 
               );
