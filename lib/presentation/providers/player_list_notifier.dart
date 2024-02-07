@@ -19,20 +19,16 @@ class PlayerListNotifier extends StateNotifier<List<Player>> {
     state = state.map((player) => player.copyWith(lives: lives)).toList();
   }
 
- void removeLife(String playerName) {
-  // Primero, actualiza las vidas de los jugadores.
-  List<Player> updatedPlayers = [
+void removeLife(String playerName) {
+  state = [
     for (final player in state)
       if (player.name == playerName)
-        player.copyWith(lives: max(0, player.lives - 1)) // Usa max para evitar vidas negativas
+        player.copyWith(lives: max(0, player.lives - 1)) // Asegúrate de no tener vidas negativas
       else
         player,
   ];
 
-  // Luego, elimina los jugadores con 0 vidas.
-  state = updatedPlayers.where((player) => player.lives > 0).toList();
 }
-
 
   void resetPlayersLives(int initialLives) {
   state = state.map((player) => player.copyWith(lives: initialLives)).toList();

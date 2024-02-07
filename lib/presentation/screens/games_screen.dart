@@ -172,7 +172,7 @@ class GamesScreen extends ConsumerWidget {
                     SizedBox(height: 4),
                     Text(game.name, style: TextStyle(fontSize: 17, color: Colors.white, fontFamily: 'Lexend', fontWeight: FontWeight.w900)),
                     SizedBox(height: 4),
-                    Text(game.subtitle, style: TextStyle(fontSize: 9, color: Colors.white.withOpacity(0.9), fontFamily: 'Lexend', fontWeight: FontWeight.w500)),
+                    Text(game.subtitle, style: TextStyle(fontSize: 8, color: Colors.white.withOpacity(0.9), fontFamily: 'Lexend', fontWeight: FontWeight.w500)),
                   ],
                 ),
                 if (game.isPremium) Align(
