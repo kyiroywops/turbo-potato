@@ -77,14 +77,14 @@ void changeQuestion() {
         backgroundColor: Colors.grey.shade300,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),
-          side: BorderSide(color: Colors.orange, width: 2),
+          side: const BorderSide(color: Colors.orange, width: 2),
         ),
-        title: Icon(
+        title: const Icon(
           Icons.warning_amber_rounded,
           color: Colors.orange,
           size: 68.0,
         ),
-        content: Column(
+        content: const Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -113,7 +113,7 @@ void changeQuestion() {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(
+            child: const Text(
               'OK',
               style: TextStyle(
                 fontFamily: 'Lexend',
@@ -191,17 +191,17 @@ void _showFinishedDialog() {
     builder: (context) =>AlertDialog(
         backgroundColor: Colors.grey.shade300, // Fondo del AlertDialog
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-        titlePadding: EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 10.0),
-        contentPadding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
-        title: Padding(
-          padding: const EdgeInsets.only(top: 10.0),
+        titlePadding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 10.0),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+        title: const Padding(
+          padding: EdgeInsets.only(top: 10.0),
           child: Icon(
             Icons.hourglass_empty,
             color: Colors.black,
             size: 68.0,
           ),
         ),
-        content: Column(
+        content: const Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -240,14 +240,14 @@ void _showFinishedDialog() {
             ref.read(playerProvider.notifier).resetPlayersLives(initialLives);
             Navigator.of(context).popUntil((route) => route.isFirst);
           },
-            child: Text('Salir', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w600)),
             style: ElevatedButton.styleFrom(
-              primary: Colors.black,
-              onPrimary: Colors.white,
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
+            child: const Text('Salir', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w600)),
           ),
         ],
       ),
@@ -264,18 +264,18 @@ void _showFinishedDialog() {
             backgroundColor: Colors.grey.shade300, // Fondo del AlertDialog
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0)),
-            titlePadding: EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 10.0),
+            titlePadding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 10.0),
             contentPadding:
-                EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
-            title: Padding(
-              padding: const EdgeInsets.only(top: 10.0),
+                const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+            title: const Padding(
+              padding: EdgeInsets.only(top: 10.0),
               child: Icon(
                 Icons.autorenew,
                 color: Colors.black,
                 size: 68.0,
               ),
             ),
-            content: Column(
+            content: const Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -295,22 +295,22 @@ void _showFinishedDialog() {
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
-                child: Text('No',
+                child: const Text('No',
                     style: TextStyle(
                         fontFamily: 'Lexend', fontWeight: FontWeight.w800)),
               ),
               ElevatedButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child: Text('Salir',
-                    style: TextStyle(
-                        fontFamily: 'Lexend', fontWeight: FontWeight.w600)),
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.black,
-                  onPrimary: Colors.white,
+                  backgroundColor: Colors.black,
+                  foregroundColor: Colors.white,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
+                child: const Text('Salir',
+                    style: TextStyle(
+                        fontFamily: 'Lexend', fontWeight: FontWeight.w600)),
               ),
             ],
           ),
@@ -328,9 +328,9 @@ void _showWinnerDialog(Player winner) {
     builder: (context) => AlertDialog(
       backgroundColor: Colors.grey.shade300, // Fondo del AlertDialog
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
-        titlePadding: EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 10.0),
-        contentPadding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
-      title: Center( // Centra el icono en el título
+        titlePadding: const EdgeInsets.fromLTRB(24.0, 24.0, 24.0, 10.0),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 20.0),
+      title: const Center( // Centra el icono en el título
         child: Icon(
           Icons.star,
           color: Colors.black,
@@ -342,11 +342,11 @@ void _showWinnerDialog(Player winner) {
         // Ajusta la alineación aquí para centrar
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text('¡Felicidades ${winner.name}!', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w800, fontSize: 20), textAlign: TextAlign.center),
-          SizedBox(height: 8),
-          Text('¡Has ganado con ${winner.lives} vidas restantes!', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w400), textAlign: TextAlign.center),
+          Text('¡Felicidades ${winner.name}!', style: const TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w800, fontSize: 20), textAlign: TextAlign.center),
+          const SizedBox(height: 8),
+          Text('¡Has ganado con ${winner.lives} vidas restantes!', style: const TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w400), textAlign: TextAlign.center),
           Padding(
-            padding: EdgeInsets.only(top: 20),
+            padding: const EdgeInsets.only(top: 20),
             // Agrandar la imagen aumentando el radio
             child: CircleAvatar(
               backgroundImage: AssetImage(winner.avatar),
@@ -354,9 +354,9 @@ void _showWinnerDialog(Player winner) {
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(vertical: 20),
+            padding: const EdgeInsets.symmetric(vertical: 20),
             // Añadir otro icono
-            child: Text(winner.name, style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w900, fontSize: 25), textAlign: TextAlign.center),
+            child: Text(winner.name, style: const TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w900, fontSize: 25), textAlign: TextAlign.center),
           ),
         ],
       ),
@@ -370,14 +370,14 @@ void _showWinnerDialog(Player winner) {
             ref.read(playerProvider.notifier).resetPlayersLives(initialLives);
             Navigator.of(context).popUntil((route) => route.isFirst);
           },
-          child: Text('Cerrar partida', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w600)),
           style: ElevatedButton.styleFrom(
-              primary: Colors.black,
-              onPrimary: Colors.white,
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
+          child: const Text('Cerrar partida', style: TextStyle(fontFamily: 'Lexend', fontWeight: FontWeight.w600)),
           ),
       
       ],
@@ -431,10 +431,8 @@ void handleLifeLoss() {
 
   @override
   Widget build(BuildContext context) {
-    final questions = ref.watch(questionsProvider(widget
-        .category)); // Esto asegura que la UI se actualice con los cambios
 
-    final gameMode = ref.watch(gameModeProvider.state).state;
+    final gameMode = ref.watch(gameModeProvider);
     final players = ref.watch(playerProvider);
     Player? currentPlayer = gameMode == GameMode.custom && players.isNotEmpty
         ? players[currentPlayerIndex]
@@ -451,7 +449,7 @@ void handleLifeLoss() {
           leading: Padding(
             padding: const EdgeInsets.only(left: 25.0),
             child: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.white, size: 23),
+              icon: const Icon(Icons.arrow_back, color: Colors.white, size: 23),
               onPressed: () async {
                 if (await _onWillPop()) {
                       // Obtén el valor inicial de las vidas desde el provider
@@ -467,7 +465,7 @@ void handleLifeLoss() {
         ),
         backgroundColor: backgroundColor,
         body: questionsAsyncValue.when(
-            loading: () => Center(child: CircularProgressIndicator()),
+            loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, stack) => Center(child: Text('Error: $error')),
             data: (questions) {
             // Verifica que hay preguntas disponibles y que el índice es válido.
@@ -477,7 +475,7 @@ void handleLifeLoss() {
               
               return Column(
                 children: [
-                  Padding(
+                  const Padding(
                     padding: EdgeInsets.all(16.0),
                     child: Text(
                       'Cultura Chupistica',
@@ -489,8 +487,8 @@ void handleLifeLoss() {
                     ),
                   ),
                   Container(
-                    margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                    padding: EdgeInsets.all(8),
+                    margin: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       color: Colors.white.withOpacity(0.3),
                       borderRadius: BorderRadius.circular(15),
@@ -499,7 +497,7 @@ void handleLifeLoss() {
                       padding: const EdgeInsets.fromLTRB(30, 3, 30, 3),
                       child: Text(
                         widget.category,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 15,
                             color: Colors.white,
                             fontFamily: 'Lexend',
@@ -510,7 +508,7 @@ void handleLifeLoss() {
                   // Aquí continuarás con el resto del contenido...
                   Expanded(
                     child: questions.isEmpty
-                        ? Center(
+                        ? const Center(
                             child: Text(
                             'No me quedan más preguntas. 🥲',
                             style: TextStyle(
@@ -536,7 +534,7 @@ void handleLifeLoss() {
                                         40, 10, 40, 40),
                                     child: Text(
                                       currentQuestion.content,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 24,
                                           color: Colors.white,
                                           fontFamily: 'Lexend',
@@ -547,7 +545,7 @@ void handleLifeLoss() {
                                   if (gameMode == GameMode.custom) ...[
                                     Padding(
                                       padding:
-                                          EdgeInsets.symmetric(vertical: 5),
+                                          const EdgeInsets.symmetric(vertical: 5),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
@@ -558,14 +556,14 @@ void handleLifeLoss() {
                                                     'assets/images/avatars/avatar1.png'),
                                             radius: 25,
                                           ),
-                                          SizedBox(width: 10),
+                                          const SizedBox(width: 10),
                                           Padding(
                                             padding:
                                                 const EdgeInsets.only(left: 8),
                                             child: Text(
                                                 currentPlayer?.name ??
                                                     'Sin jugadores',
-                                                style: TextStyle(
+                                                style: const TextStyle(
                                                     color: Colors.white,
                                                     fontSize: 20,
                                                     fontFamily: 'Lexend',
@@ -588,8 +586,8 @@ void handleLifeLoss() {
                                             fontWeight: FontWeight.w500),
                                       ),
                                     ),
-                                    SizedBox(height: 20),
-                                    Text(
+                                    const SizedBox(height: 20),
+                                    const Text(
                                       'Jugadores',
                                       style: TextStyle(
                                           fontSize: 18,
@@ -612,7 +610,7 @@ void handleLifeLoss() {
                                                     AssetImage(player.avatar),
                                               ),
                                               title: Text(player.name,
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                       color: Colors.white,
                                                       fontFamily: 'Lexend',
                                                       fontWeight:
@@ -621,7 +619,7 @@ void handleLifeLoss() {
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: List.generate(
                                                   player.lives,
-                                                  (_) => Text('❤️',
+                                                  (_) => const Text('❤️',
                                                       style: TextStyle(
                                                           color: Colors.white)),
                                                 ),
@@ -658,7 +656,7 @@ void handleLifeLoss() {
                           ),
                   ),
                 Padding(
-                  padding: EdgeInsets.symmetric(vertical: 20, horizontal: 10),
+                  padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -666,8 +664,8 @@ void handleLifeLoss() {
                         // Botón para "Pasar" solo visible en GameMode.custom
                         ElevatedButton.icon(
                           onPressed: nextQuestion, // Esta función maneja el cambio de pregunta sin afectar las vidas
-                          icon: Icon(Icons.skip_next, color: Colors.black),
-                          label: Text(
+                          icon: const Icon(Icons.skip_next, color: Colors.black),
+                          label: const Text(
                             'Pasar',
                             style: TextStyle(
                               color: Colors.black,
@@ -676,12 +674,12 @@ void handleLifeLoss() {
                             ),
                           ),
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.white,
+                            backgroundColor: Colors.white,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(30),
                             ),
-                            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                          ),
+                            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          )
                         ),
                       ],
                       // Botón para "Siguiente pregunta" visible en ambos modos, pero su acción depende del modo
@@ -695,21 +693,21 @@ void handleLifeLoss() {
                             changeQuestion();
                           }
                         },
-                        icon: Icon(Icons.arrow_forward, color: Colors.black),
+                        icon: const Icon(Icons.arrow_forward, color: Colors.black),
                         label: Text(
                           questions.isEmpty ? 'Reiniciar Juego' : 'Siguiente pregunta',
-                          style: TextStyle(
+                          style: const TextStyle(
                             color: Colors.black,
                             fontFamily: 'Lexend',
                             fontSize: 16,
                           ),
                         ),
                         style: ElevatedButton.styleFrom(
-                          primary: Colors.white,
+                          backgroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
-                          padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                           elevation: 5,
                         ),
                       ),

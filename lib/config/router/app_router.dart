@@ -29,7 +29,7 @@ final appRouter = GoRouter(
           key: state.pageKey,
           child: PlayerSelectionScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            var tween = Tween(begin: Offset(0.0, 1.0), end: Offset.zero).chain(CurveTween(curve: Curves.easeInOut));
+            var tween = Tween(begin: const Offset(0.0, 1.0), end: Offset.zero).chain(CurveTween(curve: Curves.easeInOut));
             return SlideTransition(position: animation.drive(tween), child: child);
           },
         );
@@ -43,7 +43,7 @@ final appRouter = GoRouter(
           key: state.pageKey,
           child: GamesScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            var tween = Tween(begin: Offset(0.0, 1.0), end: Offset.zero).chain(CurveTween(curve: Curves.easeInOut));
+            var tween = Tween(begin: const Offset(0.0, 1.0), end: Offset.zero).chain(CurveTween(curve: Curves.easeInOut));
             return SlideTransition(position: animation.drive(tween), child: child);
           },
         );
@@ -57,7 +57,7 @@ final appRouter = GoRouter(
           key: state.pageKey,
           child: InstructionsScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            var tween = Tween(begin: Offset(0.0, 1.0), end: Offset.zero).chain(CurveTween(curve: Curves.easeInOut));
+            var tween = Tween(begin: const Offset(0.0, 1.0), end: Offset.zero).chain(CurveTween(curve: Curves.easeInOut));
             return SlideTransition(position: animation.drive(tween), child: child);
           },
         );

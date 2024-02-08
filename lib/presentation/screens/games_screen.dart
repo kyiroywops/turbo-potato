@@ -15,68 +15,68 @@ class GamesScreen extends ConsumerWidget {
   final List<Game> games = [
     // Añade tus juegos aquí
     Game(
-        color: Color(0xFF46383b),
+        color: const Color(0xFF46383b),
         category: 'normal',
         name: 'normal',
         subtitle: 'Juego estándar de Cultura Chupística con preguntas generales y retos divertidos.',
         emoji: '😜'),
     Game(
-        color: Color(0xFFF56A79),
+        color: const Color(0xFFF56A79),
         category: 'marcas',
         name: 'marcas',
         subtitle: 'Nombra diferentes marcas en cada ronda. Quien repita o no sepa, ¡bebe!',
 
         emoji: '🏷️'),
     Game(
-        color: Color(0xFF16A5A3),
+        color: const Color(0xFF16A5A3),
         category: 'series',
         name: 'series',
         subtitle: 'Duelo de conocimientos sobre series televisivas populares.',
         emoji: '📺'),
     Game(
-        color: Color(0xFFFF414D),
+        color: const Color(0xFFFF414D),
         category: 'peliculas',
         name: 'películas',
         subtitle: 'Competencia cinéfila: comparte y descubre películas icónicas.',
         emoji: '🎬'),
     Game(
-        color: Color(0xFF1AA6B7),
+        color: const Color(0xFF1AA6B7),
         category: 'actores',
         name: 'actores',
         subtitle: '¿Quién sabe más? Un desafío sobre estrellas de la pantalla grande.',
         emoji: '🌟'),
     Game(
-        color: Color(0xFFFFB15C),
+        color: const Color(0xFFFFB15C),
         category: 'deportes',
         name: 'deportes',
         subtitle: 'Desafío para los amantes del deporte, desde fútbol hasta tenis.',
         emoji: '🏅'),
     Game(
-        color: Color(0xFF8C8EB8),
+        color: const Color(0xFF8C8EB8),
         category: 'musica',
         name: 'música',
         subtitle: 'Batalla de bandas y solistas: un juego para melómanos.',
         emoji: '🎵'),
     Game(
-        color: Color(0xFF1D152D),
+        color: const Color(0xFF1D152D),
         category: 'historia',
         name: 'historia',
         subtitle: 'Viaja en el tiempo con preguntas sobre eventos históricos.',
         emoji: '🏰'),
     Game(
-        color: Color(0xFFDA2864),
+        color: const Color(0xFFDA2864),
         category: 'geografia',
         name: 'geografía',
         subtitle: 'Explora el mundo con desafíos sobre países y ciudades.',
         emoji: '🌍'),
     Game(
-        color: Color(0xFF9AE1E2),
+        color: const Color(0xFF9AE1E2),
         category: 'ciudades',
         name: 'ciudades',
         subtitle: 'Un tour por las ciudades más icónicas del mundo.',
         emoji: '🏙️'),
     Game(
-    color: Color(0xFFA4C639), // Un color que evoque la temática de la película
+    color: const Color(0xFFA4C639), // Un color que evoque la temática de la película
     category: 'senor_anillos',
     name: 'El Señor de los Anillos',
     subtitle: 'Desafíos y trivia sobre la épica saga de El Señor de los Anillos.',
@@ -89,7 +89,7 @@ class GamesScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final gameMode = ref.watch(gameModeProvider.state).state;
+    final gameMode = ref.watch(gameModeProvider);
 
     
 
@@ -100,21 +100,21 @@ class GamesScreen extends ConsumerWidget {
           leading: BotonAtras(),
           actions: [
             Container(
-              margin: EdgeInsets.only(right: 8), // Espacio entre el contenedor y el botón de Discord
-              padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              margin: const EdgeInsets.only(right: 8), // Espacio entre el contenedor y el botón de Discord
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: Colors.brown.withOpacity(0.8),
                 borderRadius: BorderRadius.circular(15),
               ),
               child: Text(
                 gameMode == GameMode.custom ? 'Personalizada' : 'Rápida',
-                style: TextStyle(color: Colors.white, fontFamily: 'Lexend'),
+                style: const TextStyle(color: Colors.white, fontFamily: 'Lexend'),
               ),
             ),
          Padding(
             padding: const EdgeInsets.only(right: 20.0),
             child: IconButton(
-              icon: Icon(Icons.discord, color: Colors.white,),
+              icon: const Icon(Icons.discord, color: Colors.white,),
               onPressed: () {
                 showDialog(
                   context: context,
@@ -129,7 +129,7 @@ class GamesScreen extends ConsumerWidget {
         ),
       body: GridView.builder(
         padding: const EdgeInsets.all(16), // Padding exterior aumentado
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           crossAxisSpacing: 20, // Espacio horizontal aumentado
           mainAxisSpacing: 20, // Espacio vertical aumentado
@@ -158,7 +158,7 @@ class GamesScreen extends ConsumerWidget {
                   color: Colors.black.withOpacity(0.2),
                   spreadRadius: 0,
                   blurRadius: 10,
-                  offset: Offset(0, 4),
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
@@ -168,14 +168,14 @@ class GamesScreen extends ConsumerWidget {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Text(game.emoji, style: TextStyle(fontSize: 37)),
-                    SizedBox(height: 4),
-                    Text(game.name, style: TextStyle(fontSize: 17, color: Colors.white, fontFamily: 'Lexend', fontWeight: FontWeight.w900)),
-                    SizedBox(height: 4),
+                    Text(game.emoji, style: const TextStyle(fontSize: 37)),
+                    const SizedBox(height: 4),
+                    Text(game.name, style: const TextStyle(fontSize: 17, color: Colors.white, fontFamily: 'Lexend', fontWeight: FontWeight.w900)),
+                    const SizedBox(height: 4),
                     Text(game.subtitle, style: TextStyle(fontSize: 8, color: Colors.white.withOpacity(0.9), fontFamily: 'Lexend', fontWeight: FontWeight.w500)),
                   ],
                 ),
-                if (game.isPremium) Align(
+                if (game.isPremium) const Align(
                   alignment: Alignment.topRight, // Alinea el candado en el centro del Stack
 
                   child: Icon(Icons.lock, size: 30, color: Colors.white),
@@ -196,15 +196,15 @@ void _showUnlockDialog(BuildContext context, Game game) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Desbloquear Juego'),
-        content: Text('Este juego está bloqueado. Paga \$2 mensuales o \$8 para desbloquearlo para siempre.'),
+        title: const Text('Desbloquear Juego'),
+        content: const Text('Este juego está bloqueado. Paga \$2 mensuales o \$8 para desbloquearlo para siempre.'),
         actions: [
           TextButton(
-            child: Text('Cancelar'),
+            child: const Text('Cancelar'),
             onPressed: () => Navigator.of(context).pop(),
           ),
           TextButton(
-            child: Text('Pagar'),
+            child: const Text('Pagar'),
             onPressed: () {
               // Lógica para manejar el pago
               Navigator.of(context).pop();

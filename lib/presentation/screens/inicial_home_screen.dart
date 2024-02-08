@@ -54,8 +54,8 @@ class _InicialHomeScreenState extends ConsumerState<InicialHomeScreen> {
                   fit: BoxFit
                       .cover, // Esto asegura que el video cubra el espacio disponible
                   child: SizedBox(
-                    width: _controller!.value.size?.width ?? 0,
-                    height: _controller!.value.size?.height ?? 0,
+                    width: _controller!.value.size.width,
+                    height: _controller!.value.size.height,
                     child: VideoPlayer(_controller!),
                   ),
                 )
@@ -92,6 +92,16 @@ class _InicialHomeScreenState extends ConsumerState<InicialHomeScreen> {
                           onPressed: () {
                             GoRouter.of(context).push('/instructions');
                           },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white.withOpacity(0.90), // Color de fondo del botón
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30), // Bordes redondeados
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 10,
+                            ),
+                          ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
@@ -104,16 +114,6 @@ class _InicialHomeScreenState extends ConsumerState<InicialHomeScreen> {
                               ),
                             ),
                           ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.white.withOpacity(0.90), // Color de fondo del botón
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(30), // Bordes redondeados
-                            ),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 10,
-                            ),
-                          ),
                         ),
                       ),
                       Row(
@@ -121,14 +121,14 @@ class _InicialHomeScreenState extends ConsumerState<InicialHomeScreen> {
                             .center, // Centrar los íconos en el Row
                         children: <Widget>[
                           IconButton(
-                            icon: Icon(FontAwesomeIcons.instagram,
+                            icon: const Icon(FontAwesomeIcons.instagram,
                                 color: Colors.white),
                             onPressed: () => _launchURL(
                                 'https://www.instagram.com/culturachupisticaapp'),
                           ),
-                          SizedBox(width: 20), // Espacio entre los íconos
+                          const SizedBox(width: 20), // Espacio entre los íconos
                           IconButton(
-                            icon: Icon(
+                            icon: const Icon(
                               Icons.discord,
                               color: Colors.white,
                             ),
@@ -145,9 +145,9 @@ class _InicialHomeScreenState extends ConsumerState<InicialHomeScreen> {
                           ),
                         ],
                       ),
-                      SizedBox(
+                      const SizedBox(
                           height: 20), // Espacio entre los íconos y el texto
-                      Text(
+                      const Text(
                         'Recuerda beber con moderación.',
                         style: TextStyle(
                           color: Colors.white,
@@ -157,7 +157,7 @@ class _InicialHomeScreenState extends ConsumerState<InicialHomeScreen> {
                         ),
                         textAlign: TextAlign.center,
                       ),
-                      Text(
+                      const Text(
                         '© Derechos reservados Tryagain.',
                         style: TextStyle(
                           color: Colors.white,
@@ -194,7 +194,7 @@ class _InicialHomeScreenState extends ConsumerState<InicialHomeScreen> {
       child: ElevatedButton(
         onPressed: () {
           // Establece el modo de juego usando gameModeProvider
-          ref.read(gameModeProvider.state).state = mode;
+          ref.read(gameModeProvider.notifier).state = mode;
           // Navega a la ruta correspondiente basada en el modo de juego seleccionado
           if (mode == GameMode.quick) {
             // Navega a '/games' para la partida rápida
@@ -204,6 +204,18 @@ class _InicialHomeScreenState extends ConsumerState<InicialHomeScreen> {
             GoRouter.of(context).go('/playerselection');
           }
         },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isBlack
+              ? Colors.black.withOpacity(0.85)
+              : Colors.white.withOpacity(0.90),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+          ),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 24,
+            vertical: 10,
+          ),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Text(
@@ -214,18 +226,6 @@ class _InicialHomeScreenState extends ConsumerState<InicialHomeScreen> {
               fontWeight: FontWeight.w800,
               fontSize: screenSize.width * 0.035,
             ),
-          ),
-        ),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: isBlack
-              ? Colors.black.withOpacity(0.85)
-              : Colors.white.withOpacity(0.90),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-          ),
-          padding: EdgeInsets.symmetric(
-            horizontal: 24,
-            vertical: 10,
           ),
         ),
       ),

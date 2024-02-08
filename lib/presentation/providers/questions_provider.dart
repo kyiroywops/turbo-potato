@@ -6,14 +6,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class QuestionsNotifier extends StateNotifier<AsyncValue<List<Question>>> {
   final QuestionService _questionService;
-  var _isLoading = false;
 
   QuestionsNotifier(this._questionService, String category)
-      : super(AsyncValue.loading()) {
+      : super(const AsyncValue.loading()) {
     loadQuestions(category);
   }
  Future<void> loadQuestions(String category) async {
-  state = AsyncValue.loading();
+  state = const AsyncValue.loading();
   try {
     List<Question> categoryQuestions =
         await _questionService.loadQuestions(category);

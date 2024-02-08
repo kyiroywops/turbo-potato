@@ -15,7 +15,7 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios_new, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
         backgroundColor: Colors.transparent,
@@ -24,7 +24,7 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
       body: Container(
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage('assets/images/slide${_currentPage}.jpeg'),
+            image: AssetImage('assets/images/slide$_currentPage.jpeg'),
             fit: BoxFit.cover,
           ),
         ),
@@ -38,32 +38,39 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
                 });
               },
               children: <Widget>[
+              _buildPageContent(
+                icon: Icons.local_bar, // Un ícono sugerido para representar la interacción de preguntas y respuestas.
+                title: 'Descubre la Cultura Chupística', // Título que invita a los usuarios a aprender sobre el juego.
+                text: ' Conduce a una serie de preguntas que deben ser respondidas en turno. Responde correctamente y '
+                      'pasa al siguiente jugador en sentido horario, pero si te equivocas, bebe un sorbo y pasa a la siguiente pregunta.'
+              ),
                 _buildPageContent(
-                  icon: Icons.group_add,
-                  title: 'Arma tu grupo',
-                  text: 'Agrega a tus amigos a unirse y asignarles cartas aleatoriamente para comenzar la partida.',
+                  icon: Icons.flash_on, // Ícono que representa rapidez o acción inmediata.
+                  title: 'Modo Rápido', // Título que indica al usuario que esta página es para el juego rápido.
+                  text: 'Selecciona una categoría y empieza a jugar de inmediato. '
+                        'En este modo, las preguntas aparecerán una tras otra sin demora, '
+                        'permitiéndote disfrutar del juego de forma ágil y dinámica. '
+                        'Ideal para cuando quieres una partida rápida o estás corto de tiempo.', // Descripción detallada del modo rápido.
                 ),
-                _buildPageContent(
-                  icon: Icons.card_giftcard,
-                  title: 'La Pirámide',
-                  text: 'Voltea cada carta de la pirámide empezando desde la base. Si tienes la carta, puedes pasarle un sorbo a otro jugador o tomarlo tú mismo.',
-                ),
-                _buildPageContent(
-                  icon: Icons.emoji_events,
-                  title: 'Carta final',
-                  text: 'La última carta se voltea al final. El jugador que la tenga debe tomar al seco. ¡Buena suerte!',
-                ),
+              _buildPageContent(
+                icon: Icons.people, // Ícono sugerido para el modo personalizado.
+                title: 'Modo Personalizado', // Título para la instrucción del modo personalizado.
+                text: 'Crea tu grupo y cada jugador inicia con tres vidas. '
+                      'Responde a las preguntas correctamente para sobrevivir. '
+                      'Elige a quien falló para restarle una vida. '
+                      '¡El último en pie se corona campeón!', // Descripción de cómo jugar en el modo personalizado.
+              ),
               ],
             ),
             Positioned(
-              right: 20,
-              bottom: 20,
+              right: 30,
+              bottom: 35,
               child: _buildNextButton(),
             ),
             Positioned(
               left: 0,
               right: 0,
-              bottom: 10,
+              bottom: 20,
               child: _buildPageIndicator(),
             ),
           ],
@@ -81,6 +88,7 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
           Icon(icon, size: 48.0, color: Colors.white),
           Text(
             title,
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 24.0,
               color: Colors.grey[100],
@@ -119,7 +127,7 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
     return Container(
       height: 10,
       width: 10,
-      margin: EdgeInsets.symmetric(horizontal: 5),
+      margin: const EdgeInsets.symmetric(horizontal: 5),
       decoration: BoxDecoration(
         color: _currentPage == index ? Colors.white : Colors.white54,
         shape: BoxShape.circle,
@@ -132,7 +140,7 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
       onPressed: () {
         if (_currentPage < 2) {
           _pageController.nextPage(
-            duration: Duration(milliseconds: 300),
+            duration: const Duration(milliseconds: 300),
             curve: Curves.easeInOut,
           );
         } else {
@@ -140,17 +148,17 @@ class _InstructionsScreenState extends State<InstructionsScreen> {
         }
       },
       style: TextButton.styleFrom(
-        primary: Colors.white,
         backgroundColor: Colors.black.withOpacity(0.3),
+        foregroundColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30),
         ),
       ),
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
         child: Text(
           _currentPage < 2 ? 'Siguiente' : 'Finalizar',
-          style: TextStyle(
+          style: const TextStyle(
             fontFamily: 'Lexend',
             fontWeight: FontWeight.w800,
             fontSize: 12,
