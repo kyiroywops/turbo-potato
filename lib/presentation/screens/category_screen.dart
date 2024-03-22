@@ -478,7 +478,7 @@ void handleLifeLoss() {
                   const Padding(
                     padding: EdgeInsets.all(16.0),
                     child: Text(
-                      'Cultura Chupistica',
+                      'Drinking Culture',
                       style: TextStyle(
                           fontSize: 32,
                           color: Colors.white,

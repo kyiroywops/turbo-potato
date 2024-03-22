@@ -1,15 +1,16 @@
 name: culturach
 description: "A new Flutter project."
-publish_to: 'none'
+publish_to: "none"
 version: 0.1.0
 
 environment:
-  sdk: '>=3.2.3 <4.0.0'
+  sdk: ">=3.2.3 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
   flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.4.0
   flutter_riverpod: ^2.4.9
   font_awesome_flutter: ^10.7.0
   go_router: ^13.0.0
@@ -17,7 +18,7 @@ dependencies:
   video_player: ^2.8.1
 
 dev_dependencies:
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
   flutter_test:
     sdk: flutter
 
@@ -25,6 +26,13 @@ flutter_icons:
   android: true
   ios: true
   image_path: "assets/icons/icon1024.png"
+
+
+flutter_native_splash:
+  color: "#ff0568"
+  image: assets/images/splash.png
+  android: true
+  ios: true
 
 flutter:
   uses-material-design: true
@@ -34,7 +42,7 @@ flutter:
     - assets/images/videos/
     - assets/jsons/
 
-  fonts: 
+  fonts:
     - family: Lexend
       fonts:
         - asset: assets/fonts/Lexend-Thin.ttf
